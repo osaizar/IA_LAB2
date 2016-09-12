@@ -42,22 +42,32 @@ public class CustomGraphSearch implements SearchObject {
 		// Implement this!
 		System.out.println("Implement CustomGraphSearch.java!");
 		
-		
-		while(!frontier.isEmpty()){
+		// Algorithm's main loop
+		while(!frontier.isEmpty()) {
+			// Let's extract our position from the frontier
 			SearchNode currentNode = frontier.removeFirst();
 			explored.add(currentNode);
-			GridPos currentPos = currentNode.getState();
-			if(p.isGoalState(currentPos)){
+			GridPos currentPos = currentNode.getState();  // And get the state associated to it
+			if(p.isGoalState(currentPos)) {  // If that state is the goal, we're done!
 				path = currentNode.getPathFromRoot();
 				return path;
 			}
+			// Now we want to know where can we go (AKA, our child)
 			ArrayList<GridPos> reachableNodes = p.getReachableStatesFrom(currentPos);
-			
-			for(int i = 0; i < reachableNodes.size(); i++){
-				SearchNode n = new SearchNode(reachableNodes.get(i), currentNode);
-				if(!explored.contains(n)){
-					if(insertFront)frontier.addNodeToFront(n);
-					else frontier.addNodeToBack(n);
+
+			// And we want to develop all of our child options
+			for(int i = 0; i < reachableNodes.size(); i++) {
+				SearchNode nextNode = new SearchNode(reachableNodes.get(i), currentNode);
+				if(!explored.contains(nextNode)) {  // If we've already been there, there's no point in doing it again
+
+					if(insertFront) {  // DepthFirst
+						frontier.addNodeToFront(nextNode);
+					}
+					else {  // BreadthFirst
+						frontier.addNodeToBack(nextNode);
+						// Just notice that if we insert nextNode in the back, then it's not going to be the node that
+						// we're going to check in the next 'while' iteration
+					}
 				}
 			}
 		}
